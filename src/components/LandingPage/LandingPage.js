@@ -21,6 +21,16 @@ const filterData = {
   propertyType: {
     value: '',
     options: ['House', 'Townhouse', 'Villa', 'Condo', 'Any']
+  },
+  rating: {
+    value: '',
+    options: [
+        {label: 'Poor (0-2)', value: '0-2'},
+        {label: 'Average (2-3)', value: '2-3'},
+        {label: 'Good (3-4)', value: '3-4'},
+        {label: 'Very Good (4-5)', value: '4-5'},
+        {label: 'Any', value: 'Any'}
+      ]
   }
 }
 const all_airbnb_data = JSON.parse(JSON.stringify(airbnbData))
@@ -48,6 +58,8 @@ function LandingPage() {
           price={element.pricing.rate.amountFormatted}
           image_url={element.photos[0].pictureUrl}
           address={element.address}
+          property_type={element.roomType}
+          ratings={element.stars}
         ></PropertyCard>)
   });
   
@@ -58,9 +70,9 @@ function LandingPage() {
       const locationFlag = filterData.location.value === '' || filterData.location.value === 'Any' || value.address.toLowerCase().includes(filterData.location.value.toLowerCase())
       const propertyTypeFlag = filterData.propertyType.value === '' || filterData.propertyType.value === 'Any' || value.roomType.toLowerCase().includes(filterData.propertyType.value.toLowerCase())
       const priceFlag = filterData.price.value === '' || filterData.price.value === 'Any' || (value.pricing.rate.amount >= parseInt(filterData.price.value.split('-')[0].replace('$', '').replace(',', '')) && value.pricing.rate.amount <= parseInt(filterData.price.value.split('-')[1].replace('$', '').replace(',', '')))
-      return searchFlag && locationFlag && propertyTypeFlag && priceFlag
+      const ratingFlag = filterData.rating.value === '' || filterData.rating.value === 'Any' || (value.stars >= parseInt(filterData.rating.value.split('-')[0]) && value.stars <= parseInt(filterData.rating.value.split('-')[1]))
+      return searchFlag && locationFlag && propertyTypeFlag && priceFlag && ratingFlag
     });
-    console.log(processedData);
     setAirbnbDataset(processedData);
   }
   const handlePaginationChange = (action) => (e) => {
@@ -74,6 +86,7 @@ function LandingPage() {
     if(filterType === 'location') filterData.location.value = e.target.value;
     if(filterType === 'price') filterData.price.value = e.target.value;
     if(filterType === 'property_type') filterData.propertyType.value = e.target.value;
+    if(filterType === 'rating') filterData.rating.value = e.target.value;
     processFilterChange();
   }
 
@@ -84,7 +97,7 @@ function LandingPage() {
         filterData={filterData}
       ></FilterSection>
       <div className='p-5 mt-5 flex justify-center'>
-        <div className='grid grid-cols-3 gap-12'>
+        <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-12'>
           {all_property_cards}
         </div>
       </div>
