@@ -31,6 +31,10 @@ const filterData = {
         {label: 'Very Good (4-5)', value: '4-5'},
         {label: 'Any', value: 'Any'}
       ]
+  },
+  entries: {
+    value: 30,
+    options: [9, 12, 18, 30, 45, 60]
   }
 }
 const all_airbnb_data = JSON.parse(JSON.stringify(airbnbData))
@@ -38,7 +42,7 @@ const all_airbnb_data = JSON.parse(JSON.stringify(airbnbData))
 function LandingPage() {
   const [airbnb_dataset, setAirbnbDataset] = useState(all_airbnb_data);
   const total_cards = airbnb_dataset.length
-  const cards_shown = 30
+  const cards_shown = filterData.entries.value
   let total_pages = total_cards / cards_shown
   if(Number(total_pages) === total_pages && total_pages % 1 !== 0) total_pages = parseInt(total_pages + 1)
 
@@ -64,7 +68,6 @@ function LandingPage() {
   });
   
   const processFilterChange = () => {
-    console.log(filterData);
     const processedData = all_airbnb_data.filter((value) => {
       const searchFlag = value.name.toLowerCase().includes(filterData.search.toLowerCase()) || value.address.toLowerCase().includes(filterData.search.toLowerCase())
       const locationFlag = filterData.location.value === '' || filterData.location.value === 'Any' || value.address.toLowerCase().includes(filterData.location.value.toLowerCase())
@@ -87,6 +90,8 @@ function LandingPage() {
     if(filterType === 'price') filterData.price.value = e.target.value;
     if(filterType === 'property_type') filterData.propertyType.value = e.target.value;
     if(filterType === 'rating') filterData.rating.value = e.target.value;
+    if(filterType === 'entries') filterData.entries.value = e.target.value;
+
     processFilterChange();
   }
 
@@ -96,7 +101,7 @@ function LandingPage() {
         handleFilterChange={handleFilterChange}
         filterData={filterData}
       ></FilterSection>
-      <div className='p-5 mt-5 flex justify-center'>
+      <div className='px-5 mt-1 flex justify-center'>
         <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-12'>
           {all_property_cards}
         </div>
